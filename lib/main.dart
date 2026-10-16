@@ -46,14 +46,14 @@ class Appointment {
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
-      id: json['id'],
-      name: json['name'],
-      service: json['service'],
-      date: json['date'],
-      time: json['time'],
-      contact: json['contact'],
-      purpose: json['purpose'],
-      status: json['status'] ?? 'Pending',
+      id: (json['id'] ?? '').toString(),
+      name: (json['name'] ?? '').toString(),
+      service: (json['service'] ?? '').toString(),
+      date: (json['date'] ?? '').toString(),
+      time: (json['time'] ?? '').toString(),
+      contact: (json['contact'] ?? '').toString(),
+      purpose: (json['purpose'] ?? '').toString(),
+      status: (json['status'] ?? 'Pending').toString(),
     );
   }
 }
@@ -280,13 +280,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
 
-    if (result != null && mounted) {
-      await addAppointment(result);
-      setState(() => selectedTab = 1);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Appointment booked successfully!')),
-      );
-    }
+    if (result == null || !mounted) return;
+
+    await addAppointment(result);
+    if (!mounted) return;
+
+    setState(() => selectedTab = 1);
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Appointment booked successfully!')),
+    );
   }
 
   @override
@@ -753,7 +757,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 const SizedBox(height: 16),
                 const FieldLabel(text: 'Service'),
                 DropdownButtonFormField<String>(
-                  value: selectedService,
+                  initialValue: selectedService,
                   isExpanded: true,
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.description_outlined),
@@ -789,7 +793,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 const SizedBox(height: 16),
                 const FieldLabel(text: 'Preferred Time'),
                 DropdownButtonFormField<String>(
-                  value: selectedTime,
+                  initialValue: selectedTime,
                   isExpanded: true,
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.access_time),
